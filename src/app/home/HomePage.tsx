@@ -3,12 +3,14 @@ import { Link } from "react-router-dom"
 import { mapLiveSessionToCues } from "@/app/home/mappers/map-live-session-to-cues"
 import { Button } from "@/components/ui/button"
 import { urlPaths } from "@/constants/urlPaths"
+import { useIsStaff } from "@/lib/roles"
 
 import { LiveConsole } from "./components/LiveConsole"
 import { LiveSessionPicker } from "./components/LiveSessionPicker"
 import { useHomeLiveSession } from "./hooks/use-home-live-session"
 
 export default function HomePage() {
+  const isStaff = useIsStaff()
   const {
     sessions,
     selectedSessionId,
@@ -43,12 +45,20 @@ export default function HomePage() {
         <h1 className="max-w-lg text-3xl font-bold tracking-tight md:text-4xl">
           Chưa có kịch bản nào
         </h1>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Tạo phiên live mới để bắt đầu chạy kịch bản trên màn hình này.
-        </p>
-        <Button asChild size="lg" className="px-8">
-          <Link to={urlPaths.liveSessionNew}>Tạo phiên live</Link>
-        </Button>
+        {isStaff ? (
+          <>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Tạo phiên live mới để bắt đầu chạy kịch bản trên màn hình này.
+            </p>
+            <Button asChild size="lg" className="px-8">
+              <Link to={urlPaths.liveSessionNew}>Tạo phiên live</Link>
+            </Button>
+          </>
+        ) : (
+          <p className="max-w-md text-sm text-muted-foreground">
+            Liên hệ leader để tạo kịch bản cho phiên live.
+          </p>
+        )}
       </div>
     )
   }

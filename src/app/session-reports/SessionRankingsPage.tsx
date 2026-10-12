@@ -1,18 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
 
 import { DatePickerFieldIso } from "@/components/FieldCustom/DatePickerField"
 import { PageHeader } from "@/components/UiCustom/PageHeader"
 import { Button } from "@/components/ui/button"
-import { urlPaths } from "@/constants/urlPaths"
-import { useIsStaff } from "@/lib/roles"
 
 import { DailyRankingsBoard } from "./components/DailyRankingsBoard"
 import { dailyRankingsQueryOptions } from "./queries/session-report-query"
 
 export default function SessionRankingsPage() {
-  const isStaff = useIsStaff()
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
 
@@ -21,12 +17,7 @@ export default function SessionRankingsPage() {
       from: from || undefined,
       to: to || undefined,
     }),
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">

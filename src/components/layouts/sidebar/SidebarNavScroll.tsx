@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
 import { NavGroup } from "./NavGroup"
-import { ADMIN_NAV_ITEMS, ADMIN_ONLY_NAV_ITEMS } from "./nav-items"
+import { ADMIN_ONLY_NAV_ITEMS, visibleAdminNavItems } from "./nav-items"
 import type { NavItem, ScrollFadeState } from "./types"
 
 interface SidebarNavScrollProps {
@@ -20,6 +20,7 @@ export function SidebarNavScroll({
   operationItems,
   salesItems,
 }: SidebarNavScrollProps) {
+  const adminItems = visibleAdminNavItems(Boolean(showSettings))
   const scrollRef = useRef<HTMLDivElement>(null)
   const [fade, setFade] = useState<ScrollFadeState>({
     top: false,
@@ -72,8 +73,8 @@ export function SidebarNavScroll({
           {showAdminOnly && ADMIN_ONLY_NAV_ITEMS.length > 0 ? (
             <NavGroup title="HỆ THỐNG" items={ADMIN_ONLY_NAV_ITEMS} />
           ) : null}
-          {showSettings && ADMIN_NAV_ITEMS.length > 0 ? (
-            <NavGroup title="QUẢN TRỊ" items={ADMIN_NAV_ITEMS} />
+          {adminItems.length > 0 ? (
+            <NavGroup title="QUẢN TRỊ" items={adminItems} />
           ) : null}
         </nav>
       </div>

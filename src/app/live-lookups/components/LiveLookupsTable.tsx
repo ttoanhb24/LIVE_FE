@@ -12,8 +12,9 @@ interface LiveLookupsTableProps {
   pageIndex: number
   pageCount: number
   onPageChange: (pageIndex: number) => void
-  onEdit: (lookup: LiveLookup) => void
-  onDelete: (lookup: LiveLookup) => void
+  /** Bỏ trống cả hai thì ẩn cột thao tác (MEMBER chỉ xem). */
+  onEdit?: (lookup: LiveLookup) => void
+  onDelete?: (lookup: LiveLookup) => void
 }
 
 export function LiveLookupsTable({
@@ -30,7 +31,10 @@ export function LiveLookupsTable({
       accessorKey: "name",
       header: "Tên",
     },
-    {
+  ]
+
+  if (onEdit && onDelete) {
+    columns.push({
       id: "actions",
       header: "",
       cell: ({ row }) => (
@@ -55,8 +59,8 @@ export function LiveLookupsTable({
           </Button>
         </div>
       ),
-    },
-  ]
+    })
+  }
 
   return (
     <DataTable

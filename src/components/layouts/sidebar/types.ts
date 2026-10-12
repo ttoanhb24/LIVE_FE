@@ -4,6 +4,8 @@ export interface NavItem {
   icon: React.ReactNode
   isHighlighted?: boolean
   children?: { label: string; to: string }[]
+  /** Chỉ LEADER + ADMIN thấy. Không đặt = MEMBER cũng thấy (trang chỉ xem). */
+  staffOnly?: boolean
 }
 
 export interface ScrollFadeState {
