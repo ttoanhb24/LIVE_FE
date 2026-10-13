@@ -27,7 +27,7 @@ const COLUMNS: {
   {
     key: "retention",
     title: "Tổng trung bình tỷ lệ giữ chân cao nhất",
-    format: (value) => `${formatNumber(value)}%`,
+    format: (value) => `${formatNumber(value)} giây`,
   },
 ]
 

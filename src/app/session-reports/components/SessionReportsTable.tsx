@@ -72,7 +72,7 @@ export function SessionReportsTable({
     },
     {
       accessorKey: "retentionRate",
-      header: "Giữ chân (%)",
+      header: "Giữ chân (giây)",
       cell: ({ row }) => formatNumber(row.original.retentionRate),
     },
     {

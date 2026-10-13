@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 
 import {
   LIVE_LOOKUP_KIND,
@@ -17,12 +17,14 @@ import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 
 import { useSessionReportMutations } from "../hooks/use-session-report-mutations"
+import { staffNamesQueryOptions } from "../queries/session-report-query"
 import {
   sessionReportDefaultValues,
   sessionReportFormSchema,
   type SessionReportFormInput,
   type SessionReportFormValues,
 } from "../schemas/session-report-form.schema"
+import { StaffNameField } from "./StaffNameField"
 
 interface SessionReportDialogProps {
   open: boolean
@@ -58,6 +60,12 @@ export function SessionReportDialog({
   const form = useForm<SessionReportFormInput>({
     resolver: zodResolver(sessionReportFormSchema),
     defaultValues: sessionReportDefaultValues,
+  })
+
+  const liveDate = useWatch({ control: form.control, name: "liveDate" })
+  const staffNames = useQuery({
+    ...staffNamesQueryOptions(liveDate),
+    enabled: open && /^\d{4}-\d{2}-\d{2}$/.test(liveDate),
   })
 
   useEffect(() => {
@@ -107,17 +115,19 @@ export function SessionReportDialog({
       }
     >
       <Form {...form}>
+        {/* noValidate: ô số dùng type="number" (bước mặc định 1) nên trình duyệt tự chặn "4.5" giờ —
+            để zod kiểm theo đúng luật BE. */}
         <form
           id="session-report-form"
+          noValidate
           className="grid gap-4 sm:grid-cols-2"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
           <FormDate control={form.control} name="liveDate" label="Ngày live" required />
-          <FormInput
+          <StaffNameField
             control={form.control}
-            name="staffName"
-            label="Tên nhân sự"
-            required
+            names={staffNames.data?.names ?? []}
+            loading={staffNames.isLoading}
           />
           <FormSelect
             control={form.control}
@@ -154,7 +164,7 @@ export function SessionReportDialog({
           <FormInput
             control={form.control}
             name="totalHours"
-            label="Tổng giờ live"
+            label="Tổng giờ live (giờ, vd 3.5)"
             type="number"
             required
           />
@@ -175,7 +185,7 @@ export function SessionReportDialog({
           <FormInput
             control={form.control}
             name="retentionRate"
-            label="Tỷ lệ giữ chân (%)"
+            label="Tỷ lệ giữ chân (giây)"
             type="number"
             required
           />

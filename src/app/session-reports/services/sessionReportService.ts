@@ -5,10 +5,12 @@ import type { PaginatedResponse } from "@/types/pagination"
 
 import type {
   CreateSessionReportPayload,
+  CreateSessionReportResponse,
   DailyRankings,
   DailyRankingsParams,
   ListSessionReportsParams,
   SessionReport,
+  StaffNamesResponse,
 } from "../types/session-report"
 
 export async function fetchSessionReports(
@@ -33,6 +35,20 @@ export async function fetchDailyRankings(
 
 export async function createSessionReport(
   payload: CreateSessionReportPayload
-): Promise<void> {
-  await httpService.post(API_PATHS.SESSION_REPORTS.BASE, payload)
+): Promise<CreateSessionReportResponse> {
+  const { data } = await httpService.post<CreateSessionReportResponse>(
+    API_PATHS.SESSION_REPORTS.BASE,
+    payload
+  )
+  return data
+}
+
+export async function fetchStaffNames(
+  liveDate: string
+): Promise<StaffNamesResponse> {
+  const { data } = await httpService.get<StaffNamesResponse>(
+    API_PATHS.SESSION_REPORTS.STAFF_NAMES,
+    { params: { liveDate } }
+  )
+  return data
 }

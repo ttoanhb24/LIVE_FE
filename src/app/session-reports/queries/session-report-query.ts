@@ -2,7 +2,11 @@ import { queryOptions } from "@tanstack/react-query"
 
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 
-import { fetchDailyRankings, fetchSessionReports } from "../services/sessionReportService"
+import {
+  fetchDailyRankings,
+  fetchSessionReports,
+  fetchStaffNames,
+} from "../services/sessionReportService"
 import type { DailyRankingsParams, ListSessionReportsParams } from "../types/session-report"
 
 export const sessionReportKeys = {
@@ -11,6 +15,17 @@ export const sessionReportKeys = {
     [...sessionReportKeys.all, "list", params] as const,
   daily: (params: DailyRankingsParams) =>
     [...sessionReportKeys.all, "daily-rankings", params] as const,
+  staffNames: (month: string) =>
+    [...sessionReportKeys.all, "staff-names", month] as const,
+}
+
+/** Tên trên sheet báo cáo theo tháng của ngày live — mỗi tháng là một tab riêng. */
+export function staffNamesQueryOptions(liveDate: string) {
+  return queryOptions({
+    queryKey: sessionReportKeys.staffNames(liveDate.slice(0, 7)),
+    queryFn: () => fetchStaffNames(liveDate),
+    staleTime: 5 * 60_000,
+  })
 }
 
 export function dailyRankingsQueryOptions(params: DailyRankingsParams = {}) {

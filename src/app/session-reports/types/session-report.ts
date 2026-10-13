@@ -4,6 +4,17 @@ export interface CreateSessionReportPayload extends SessionReportFormValues {
   sessionId: string
 }
 
+/** Kết quả chép báo cáo sang Google Sheet báo cáo tổng (BE trả kèm khi nộp). */
+export type SheetSyncResult =
+  | { status: "synced"; tab: string; row: number }
+  | { status: "skipped" }
+  | { status: "failed"; message: string }
+
+export interface StaffNamesResponse {
+  /** Rỗng khi BE chưa nối sheet hoặc sheet lỗi — form cho gõ tay. */
+  names: string[]
+}
+
 export interface SessionReportLookup {
   id: string
   name: string
@@ -28,6 +39,10 @@ export interface SessionReport {
   impressionCount: number
   createdAt: string
   updatedAt: string
+}
+
+export interface CreateSessionReportResponse extends SessionReport {
+  sheetSync: SheetSyncResult
 }
 
 export interface DailyRankingRow {
