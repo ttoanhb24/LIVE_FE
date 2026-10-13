@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import {
@@ -16,6 +16,7 @@ import { FormDialog } from "@/components/UiCustom/FormDialog"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 
+import { validateReportImageFile } from "../constants/report-image"
 import { useSessionReportMutations } from "../hooks/use-session-report-mutations"
 import { staffNamesQueryOptions } from "../queries/session-report-query"
 import {
@@ -24,6 +25,7 @@ import {
   type SessionReportFormInput,
   type SessionReportFormValues,
 } from "../schemas/session-report-form.schema"
+import { ReportImageUpload } from "./ReportImageUpload"
 import { StaffNameField } from "./StaffNameField"
 
 interface SessionReportDialogProps {
@@ -52,6 +54,8 @@ export function SessionReportDialog({
   sessionId,
 }: SessionReportDialogProps) {
   const { createMutation } = useSessionReportMutations()
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imageError, setImageError] = useState<string | null>(null)
   const shifts = useLookupOptions(LIVE_LOOKUP_KIND.SHIFT, open)
   const liveTypes = useLookupOptions(LIVE_LOOKUP_KIND.LIVE_TYPE, open)
   const teams = useLookupOptions(LIVE_LOOKUP_KIND.TEAM, open)
@@ -77,11 +81,30 @@ export function SessionReportDialog({
     }
   }, [open, form])
 
+  /** Đóng form thì bỏ ảnh đã chọn — mở lại là một báo cáo mới. */
+  function handleOpenChange(next: boolean) {
+    if (!next) {
+      setImageFile(null)
+      setImageError(null)
+    }
+    onOpenChange(next)
+  }
+
   function handleSubmit(values: SessionReportFormValues) {
+    const fileError = validateReportImageFile(imageFile)
+    if (fileError || !imageFile) {
+      setImageError(fileError)
+      return
+    }
     createMutation.mutate(
-      { ...values, sessionId },
-      { onSuccess: () => onOpenChange(false) }
+      { values, sessionId, imageFile },
+      { onSuccess: () => handleOpenChange(false) }
     )
+  }
+
+  /** Các ô khác còn lỗi vẫn báo luôn thiếu ảnh, khỏi sửa xong mới phát hiện. */
+  function handleInvalid() {
+    setImageError(validateReportImageFile(imageFile))
   }
 
   const lookupsLoading =
@@ -90,7 +113,7 @@ export function SessionReportDialog({
   return (
     <FormDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title="Báo cáo kết thúc ca"
       description="Điền số liệu ca vừa live."
       contentClassName="sm:max-w-xl max-h-[90vh] overflow-y-auto"
@@ -99,7 +122,7 @@ export function SessionReportDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => handleOpenChange(false)}
             disabled={createMutation.isPending}
           >
             Hủy
@@ -121,7 +144,7 @@ export function SessionReportDialog({
           id="session-report-form"
           noValidate
           className="grid gap-4 sm:grid-cols-2"
-          onSubmit={form.handleSubmit(handleSubmit)}
+          onSubmit={form.handleSubmit(handleSubmit, handleInvalid)}
         >
           <FormDate control={form.control} name="liveDate" label="Ngày live" required />
           <StaffNameField
@@ -202,6 +225,14 @@ export function SessionReportDialog({
             label="Lượt hiển thị"
             type="number"
             required
+          />
+          <ReportImageUpload
+            error={imageError}
+            disabled={createMutation.isPending}
+            onFileChange={(file) => {
+              setImageFile(file)
+              if (file) setImageError(null)
+            }}
           />
         </form>
       </Form>

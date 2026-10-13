@@ -4,16 +4,25 @@ import { toast } from "sonner"
 import { getApiErrorMessage } from "@/lib/get-api-error-message"
 
 import { sessionReportKeys } from "../queries/session-report-query"
-import { createSessionReport } from "../services/sessionReportService"
-import type { CreateSessionReportPayload } from "../types/session-report"
+import {
+  createSessionReport,
+  uploadReportImage,
+} from "../services/sessionReportService"
 import { sheetSyncNotice } from "../utils/sheet-sync-notice"
+import {
+  submitSessionReport,
+  type SubmitSessionReportInput,
+} from "../utils/submit-session-report"
 
 export function useSessionReportMutations() {
   const queryClient = useQueryClient()
 
   const createMutation = useMutation({
-    mutationFn: (payload: CreateSessionReportPayload) =>
-      createSessionReport(payload),
+    mutationFn: (input: SubmitSessionReportInput) =>
+      submitSessionReport(input, {
+        uploadImage: uploadReportImage,
+        createReport: createSessionReport,
+      }),
     onSuccess: async (report) => {
       await queryClient.invalidateQueries({ queryKey: sessionReportKeys.all })
       const notice = sheetSyncNotice(report.sheetSync)

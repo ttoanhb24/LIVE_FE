@@ -2,6 +2,12 @@ import type { SessionReportFormValues } from "../schemas/session-report-form.sch
 
 export interface CreateSessionReportPayload extends SessionReportFormValues {
   sessionId: string
+  /** Link ảnh chụp số liệu ca, lấy từ API upload-image. */
+  imageUrl: string
+}
+
+export interface ReportImageUploadResponse {
+  imageUrl: string
 }
 
 /** Kết quả chép báo cáo sang Google Sheet báo cáo tổng (BE trả kèm khi nộp). */
@@ -37,6 +43,8 @@ export interface SessionReport {
   retentionRate: number
   orderCount: number
   impressionCount: number
+  /** null với báo cáo nộp trước khi form có ô ảnh. */
+  imageUrl: string | null
   createdAt: string
   updatedAt: string
 }

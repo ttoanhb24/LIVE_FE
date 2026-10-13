@@ -9,9 +9,23 @@ import type {
   DailyRankings,
   DailyRankingsParams,
   ListSessionReportsParams,
+  ReportImageUploadResponse,
   SessionReport,
   StaffNamesResponse,
 } from "../types/session-report"
+
+export async function uploadReportImage(
+  file: File
+): Promise<ReportImageUploadResponse> {
+  const formData = new FormData()
+  formData.append("image", file)
+
+  const { data } = await httpService.post<ReportImageUploadResponse>(
+    API_PATHS.SESSION_REPORTS.UPLOAD_IMAGE,
+    formData
+  )
+  return data
+}
 
 export async function fetchSessionReports(
   params: ListSessionReportsParams
