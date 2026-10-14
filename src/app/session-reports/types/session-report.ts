@@ -2,6 +2,23 @@ import type { SessionReportFormValues } from "../schemas/session-report-form.sch
 
 export interface CreateSessionReportPayload extends SessionReportFormValues {
   sessionId: string
+  /** Link ảnh chụp số liệu ca, lấy từ API upload-image. */
+  imageUrl: string
+}
+
+export interface ReportImageUploadResponse {
+  imageUrl: string
+}
+
+/** Kết quả chép báo cáo sang Google Sheet báo cáo tổng (BE trả kèm khi nộp). */
+export type SheetSyncResult =
+  | { status: "synced"; tab: string; row: number }
+  | { status: "skipped" }
+  | { status: "failed"; message: string }
+
+export interface StaffNamesResponse {
+  /** Rỗng khi BE chưa nối sheet hoặc sheet lỗi — form cho gõ tay. */
+  names: string[]
 }
 
 export interface SessionReportLookup {
@@ -26,8 +43,14 @@ export interface SessionReport {
   retentionRate: number
   orderCount: number
   impressionCount: number
+  /** null với báo cáo nộp trước khi form có ô ảnh. */
+  imageUrl: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface CreateSessionReportResponse extends SessionReport {
+  sheetSync: SheetSyncResult
 }
 
 export interface DailyRankingRow {

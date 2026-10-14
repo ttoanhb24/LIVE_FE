@@ -72,7 +72,7 @@ export function SessionReportsTable({
     },
     {
       accessorKey: "retentionRate",
-      header: "Giữ chân (%)",
+      header: "Giữ chân (giây)",
       cell: ({ row }) => formatNumber(row.original.retentionRate),
     },
     {
@@ -84,6 +84,27 @@ export function SessionReportsTable({
       accessorKey: "impressionCount",
       header: "Hiển thị",
       cell: ({ row }) => formatNumber(row.original.impressionCount),
+    },
+    {
+      id: "image",
+      header: "Ảnh",
+      cell: ({ row }) =>
+        row.original.imageUrl ? (
+          <a
+            href={row.original.imageUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Xem ảnh báo cáo của ${row.original.staffName}`}
+          >
+            <img
+              src={row.original.imageUrl}
+              alt=""
+              className="h-10 w-10 rounded-md border object-cover"
+            />
+          </a>
+        ) : (
+          <span className="text-sm text-muted-foreground">—</span>
+        ),
     },
     { accessorKey: "sessionName", header: "Kịch bản" },
   ]

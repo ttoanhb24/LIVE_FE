@@ -40,6 +40,8 @@ const API_PATHS = {
   SESSION_REPORTS: {
     BASE: "/session-reports",
     DAILY_RANKINGS: "/session-reports/daily-rankings",
+    STAFF_NAMES: "/session-reports/staff-names",
+    UPLOAD_IMAGE: "/session-reports/upload-image",
   },
 }
 
