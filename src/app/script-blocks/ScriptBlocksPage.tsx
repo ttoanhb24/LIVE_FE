@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { FileText, Plus, Search } from "lucide-react"
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
 
 import {
   SCRIPT_BLOCK_TYPE_OPTIONS,
@@ -28,7 +27,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { MODAL_MODE } from "@/constants/common"
-import { urlPaths } from "@/constants/urlPaths"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useIsStaff } from "@/lib/roles"
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
@@ -36,6 +34,7 @@ import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 const ALL_TYPES_VALUE = "ALL"
 
 export default function ScriptBlocksPage() {
+  // MEMBER xem được; thêm/sửa/xóa chỉ LEADER + ADMIN.
   const isStaff = useIsStaff()
 
   const [page, setPage] = useState(DEFAULT_PAGE)
@@ -62,12 +61,7 @@ export default function ScriptBlocksPage() {
       type: typeFilter,
     }),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   const scriptBlocks = data?.data ?? []
   const meta = data?.meta
@@ -132,10 +126,12 @@ export default function ScriptBlocksPage() {
         title="Kho nội dung"
         description="Quản lý block kịch bản dùng khi generate timeline livestream."
         actions={
-          <Button type="button" onClick={openCreateDialog}>
-            <Plus className="h-4 w-4" />
-            Thêm block
-          </Button>
+          isStaff ? (
+            <Button type="button" onClick={openCreateDialog}>
+              <Plus className="h-4 w-4" />
+              Thêm block
+            </Button>
+          ) : undefined
         }
       />
 
@@ -174,27 +170,31 @@ export default function ScriptBlocksPage() {
         pageIndex={pageIndex}
         pageCount={pageCount}
         onPageChange={(nextPageIndex) => setPage(nextPageIndex + 1)}
-        onEdit={openEditDialog}
-        onDelete={openDeleteDialog}
+        onEdit={isStaff ? openEditDialog : undefined}
+        onDelete={isStaff ? openDeleteDialog : undefined}
       />
 
-      <ScriptBlockFormDialog
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        mode={formMode}
-        scriptBlock={selectedBlock}
-        loading={createMutation.isPending || updateMutation.isPending}
-        onCreate={handleCreate}
-        onUpdate={handleUpdate}
-      />
+      {isStaff ? (
+        <>
+          <ScriptBlockFormDialog
+            open={formOpen}
+            onOpenChange={setFormOpen}
+            mode={formMode}
+            scriptBlock={selectedBlock}
+            loading={createMutation.isPending || updateMutation.isPending}
+            onCreate={handleCreate}
+            onUpdate={handleUpdate}
+          />
 
-      <ScriptBlockDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        scriptBlock={deletingBlock}
-        loading={deleteMutation.isPending}
-        onConfirm={handleDeleteConfirm}
-      />
+          <ScriptBlockDeleteDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+            scriptBlock={deletingBlock}
+            loading={deleteMutation.isPending}
+            onConfirm={handleDeleteConfirm}
+          />
+        </>
+      ) : null}
     </div>
   )
 }

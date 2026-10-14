@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
 import { useState } from "react"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { LiveSessionDeleteDialog } from "@/app/live-sessions/components/LiveSessionDeleteDialog"
 import { LiveSessionsTable } from "@/app/live-sessions/components/LiveSessionsTable"
@@ -29,6 +29,7 @@ import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 const ALL_STATUS_VALUE = "ALL"
 
 export default function LiveSessionsPage() {
+  // MEMBER xem được; tạo/xóa chỉ LEADER + ADMIN.
   const isStaff = useIsStaff()
   const navigate = useNavigate()
 
@@ -47,12 +48,7 @@ export default function LiveSessionsPage() {
       status: statusFilter,
     }),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   const sessions = data?.data ?? []
   const meta = data?.meta
@@ -80,10 +76,12 @@ export default function LiveSessionsPage() {
         title="Kịch bản live"
         description="Xếp bước mở đầu, sản phẩm, CTA, trò chơi, kết thúc theo ý bạn. Lên sóng chỉ việc chọn phiên nháp."
         actions={
-          <Button type="button" onClick={() => navigate(urlPaths.liveSessionNew)}>
-            <Plus className="h-4 w-4" />
-            Tạo kịch bản
-          </Button>
+          isStaff ? (
+            <Button type="button" onClick={() => navigate(urlPaths.liveSessionNew)}>
+              <Plus className="h-4 w-4" />
+              Tạo kịch bản
+            </Button>
+          ) : undefined
         }
       />
 
@@ -111,19 +109,25 @@ export default function LiveSessionsPage() {
         pageCount={pageCount}
         onPageChange={(nextPageIndex) => setPage(nextPageIndex + 1)}
         onView={(session) => navigate(urlPaths.liveSessionDetail(session.id))}
-        onDelete={(session) => {
-          setDeletingSession(session)
-          setDeleteOpen(true)
-        }}
+        onDelete={
+          isStaff
+            ? (session) => {
+                setDeletingSession(session)
+                setDeleteOpen(true)
+              }
+            : undefined
+        }
       />
 
-      <LiveSessionDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        session={deletingSession}
-        loading={deleteMutation.isPending}
-        onConfirm={handleDeleteConfirm}
-      />
+      {isStaff ? (
+        <LiveSessionDeleteDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          session={deletingSession}
+          loading={deleteMutation.isPending}
+          onConfirm={handleDeleteConfirm}
+        />
+      ) : null}
     </div>
   )
 }

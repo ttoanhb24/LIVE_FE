@@ -1,14 +1,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { Plus, Search } from "lucide-react"
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
 
 import { PageHeader } from "@/components/UiCustom/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MODAL_MODE, type ModalModeType } from "@/constants/common"
-import { urlPaths } from "@/constants/urlPaths"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useIsStaff } from "@/lib/roles"
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
@@ -27,6 +25,7 @@ import type { LiveLookupFormValues } from "./schemas/live-lookup-form.schema"
 import type { LiveLookup } from "./types/live-lookup"
 
 export default function LiveLookupsPage() {
+  // MEMBER xem được; thêm/sửa/xóa chỉ LEADER + ADMIN.
   const isStaff = useIsStaff()
 
   const [kind, setKind] = useState<LiveLookupKind>(LIVE_LOOKUP_KIND.SHIFT)
@@ -55,12 +54,7 @@ export default function LiveLookupsPage() {
       q: debouncedSearch || undefined,
     }),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   const lookups = data?.data ?? []
   const meta = data?.meta
@@ -129,10 +123,12 @@ export default function LiveLookupsPage() {
         title="Danh mục live"
         description="Ca, phân loại, team và kênh dùng khi kết thúc ca."
         actions={
-          <Button type="button" onClick={openCreateDialog}>
-            <Plus className="h-4 w-4" />
-            {tab.addLabel}
-          </Button>
+          isStaff ? (
+            <Button type="button" onClick={openCreateDialog}>
+              <Plus className="h-4 w-4" />
+              {tab.addLabel}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -162,27 +158,31 @@ export default function LiveLookupsPage() {
         pageIndex={pageIndex}
         pageCount={pageCount}
         onPageChange={(nextPageIndex) => setPage(nextPageIndex + 1)}
-        onEdit={openEditDialog}
-        onDelete={openDeleteDialog}
+        onEdit={isStaff ? openEditDialog : undefined}
+        onDelete={isStaff ? openDeleteDialog : undefined}
       />
 
-      <LiveLookupFormDialog
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        mode={formMode}
-        name={selected?.name}
-        title={formMode === MODAL_MODE.EDIT ? `Sửa ${tab.label}` : tab.addLabel}
-        loading={formLoading}
-        onSubmit={handleSubmit}
-      />
+      {isStaff ? (
+        <>
+          <LiveLookupFormDialog
+            open={formOpen}
+            onOpenChange={setFormOpen}
+            mode={formMode}
+            name={selected?.name}
+            title={formMode === MODAL_MODE.EDIT ? `Sửa ${tab.label}` : tab.addLabel}
+            loading={formLoading}
+            onSubmit={handleSubmit}
+          />
 
-      <LiveLookupDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        lookup={deleting}
-        loading={deleteMutation.isPending}
-        onConfirm={handleDeleteConfirm}
-      />
+          <LiveLookupDeleteDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+            lookup={deleting}
+            loading={deleteMutation.isPending}
+            onConfirm={handleDeleteConfirm}
+          />
+        </>
+      ) : null}
     </div>
   )
 }

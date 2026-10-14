@@ -19,7 +19,8 @@ interface LiveSessionsTableProps {
   pageCount: number
   onPageChange: (pageIndex: number) => void
   onView: (session: LiveSessionListItem) => void
-  onDelete: (session: LiveSessionListItem) => void
+  /** Bỏ trống thì ẩn nút xóa (MEMBER chỉ xem). */
+  onDelete?: (session: LiveSessionListItem) => void
 }
 
 function formatDate(value: string): string {
@@ -90,7 +91,7 @@ export function LiveSessionsTable({
           >
             <Eye className="h-4 w-4" />
           </Button>
-          {row.original.status === "DRAFT" ? (
+          {onDelete && row.original.status === "DRAFT" ? (
             <Button
               type="button"
               variant="ghost"

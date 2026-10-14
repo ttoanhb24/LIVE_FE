@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { Plus, Search } from "lucide-react"
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
 
 import { ProductDeleteDialog } from "@/app/products/components/ProductDeleteDialog"
 import { ProductFormDialog } from "@/app/products/components/ProductFormDialog"
@@ -18,12 +17,12 @@ import { PageHeader } from "@/components/UiCustom/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MODAL_MODE } from "@/constants/common"
-import { urlPaths } from "@/constants/urlPaths"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useIsStaff } from "@/lib/roles"
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 
 export default function ProductsPage() {
+  // MEMBER xem được; thêm/sửa/xóa chỉ LEADER + ADMIN.
   const isStaff = useIsStaff()
 
   const [page, setPage] = useState(DEFAULT_PAGE)
@@ -48,12 +47,7 @@ export default function ProductsPage() {
       q: debouncedSearch || undefined,
     }),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   const products = data?.data ?? []
   const meta = data?.meta
@@ -135,10 +129,12 @@ export default function ProductsPage() {
         title="Sản phẩm"
         description="Quản lý mã hàng và biến thể. Liên kết Sapo và danh mục sẽ bổ sung sau."
         actions={
-          <Button type="button" onClick={openCreateDialog}>
-            <Plus className="h-4 w-4" />
-            Thêm sản phẩm
-          </Button>
+          isStaff ? (
+            <Button type="button" onClick={openCreateDialog}>
+              <Plus className="h-4 w-4" />
+              Thêm sản phẩm
+            </Button>
+          ) : undefined
         }
       />
 
@@ -158,27 +154,31 @@ export default function ProductsPage() {
         pageIndex={pageIndex}
         pageCount={pageCount}
         onPageChange={(nextPageIndex) => setPage(nextPageIndex + 1)}
-        onEdit={openEditDialog}
-        onDelete={openDeleteDialog}
+        onEdit={isStaff ? openEditDialog : undefined}
+        onDelete={isStaff ? openDeleteDialog : undefined}
       />
 
-      <ProductFormDialog
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        mode={formMode}
-        product={selectedProduct}
-        loading={createMutation.isPending || updateMutation.isPending}
-        onCreate={handleCreate}
-        onUpdate={handleUpdate}
-      />
+      {isStaff ? (
+        <>
+          <ProductFormDialog
+            open={formOpen}
+            onOpenChange={setFormOpen}
+            mode={formMode}
+            product={selectedProduct}
+            loading={createMutation.isPending || updateMutation.isPending}
+            onCreate={handleCreate}
+            onUpdate={handleUpdate}
+          />
 
-      <ProductDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        product={deletingProduct}
-        loading={deleteMutation.isPending}
-        onConfirm={handleDeleteConfirm}
-      />
+          <ProductDeleteDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+            product={deletingProduct}
+            loading={deleteMutation.isPending}
+            onConfirm={handleDeleteConfirm}
+          />
+        </>
+      ) : null}
     </div>
   )
 }

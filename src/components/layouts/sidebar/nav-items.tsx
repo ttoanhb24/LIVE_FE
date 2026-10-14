@@ -36,16 +36,19 @@ export const ADMIN_ONLY_NAV_ITEMS: NavItem[] = [
   },
 ]
 
+/** MEMBER thấy các mục không có `staffOnly` — chỉ xem, không thêm/sửa/xóa. */
 export const ADMIN_NAV_ITEMS: NavItem[] = [
   {
     to: urlPaths.emotions,
     label: "Biểu cảm",
     icon: <Smile className="h-4 w-4" />,
+    staffOnly: true,
   },
   {
     to: urlPaths.blockGroups,
     label: "Nhóm block",
     icon: <Layers className="h-4 w-4" />,
+    staffOnly: true,
   },
   {
     to: urlPaths.products,
@@ -79,3 +82,8 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
     icon: <BarChart3 className="h-4 w-4" />,
   },
 ]
+
+/** Mục "QUẢN TRỊ" theo quyền: LEADER + ADMIN thấy hết, MEMBER bỏ mục `staffOnly`. */
+export function visibleAdminNavItems(isStaff: boolean): NavItem[] {
+  return isStaff ? ADMIN_NAV_ITEMS : ADMIN_NAV_ITEMS.filter((item) => !item.staffOnly)
+}

@@ -13,8 +13,9 @@ interface ProductsTableProps {
   pageIndex: number
   pageCount: number
   onPageChange: (pageIndex: number) => void
-  onEdit: (product: Product) => void
-  onDelete: (product: Product) => void
+  /** Bỏ trống cả hai thì ẩn cột thao tác (MEMBER chỉ xem). */
+  onEdit?: (product: Product) => void
+  onDelete?: (product: Product) => void
 }
 
 function formatPrice(product: Product): string {
@@ -102,7 +103,10 @@ export function ProductsTable({
           <Badge variant="outline">Ngưng</Badge>
         ),
     },
-    {
+  ]
+
+  if (onEdit && onDelete) {
+    columns.push({
       id: "actions",
       header: "Thao tác",
       cell: ({ row }) => (
@@ -127,8 +131,8 @@ export function ProductsTable({
           </Button>
         </div>
       ),
-    },
-  ]
+    })
+  }
 
   return (
     <DataTable
