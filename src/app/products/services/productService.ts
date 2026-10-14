@@ -7,6 +7,7 @@ import type {
   ListProductsParams,
   Product,
   ProductImageUploadResponse,
+  SapoSyncStatus,
   UpdateProductPayload,
 } from "../types/product"
 
@@ -17,6 +18,11 @@ export async function fetchProducts(
     API_PATHS.PRODUCTS.BASE,
     { params }
   )
+  return data
+}
+
+export async function fetchProductTypes(): Promise<string[]> {
+  const { data } = await httpService.get<string[]>(API_PATHS.PRODUCTS.TYPES)
   return data
 }
 
@@ -56,4 +62,15 @@ export async function uploadProductImage(
     formData
   )
   return data
+}
+
+/** BE đồng bộ chạy nền vài phút — bắt đầu rồi hỏi lại mỗi `waitMs` tới khi xong. */
+export async function runSapoSync(waitMs = 3000): Promise<SapoSyncStatus> {
+  const url = API_PATHS.PRODUCTS.SAPO_SYNC
+  let status = (await httpService.post<SapoSyncStatus>(url)).data
+  while (status.running) {
+    await new Promise((resolve) => setTimeout(resolve, waitMs))
+    status = (await httpService.get<SapoSyncStatus>(url)).data
+  }
+  return status
 }

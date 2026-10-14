@@ -21,6 +21,7 @@ export interface Product {
   videoUrl: string | null
   sapoId: string | null
   sapoUrl: string | null
+  productType: string | null
   isActive: boolean
   variants: ProductVariant[]
   createdAt: string
@@ -58,8 +59,22 @@ export interface ListProductsParams {
   q?: string
   categoryId?: string
   isActive?: boolean
+  productType?: string
+  minPrice?: number
+  maxPrice?: number
 }
 
 export interface ProductImageUploadResponse {
   imageUrl: string
+}
+
+export interface SapoSyncStatus {
+  running: boolean
+  result: {
+    total: number
+    created: number
+    updated: number
+    deactivated: number
+  } | null
+  error: string | null
 }

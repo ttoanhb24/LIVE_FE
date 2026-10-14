@@ -26,6 +26,7 @@ const product: Product = {
   videoUrl: null,
   sapoId: null,
   sapoUrl: null,
+  productType: null,
   isActive: true,
   variants: [],
   ...timestamps,

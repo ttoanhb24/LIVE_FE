@@ -79,6 +79,11 @@ export function ProductsTable({
         ),
     },
     {
+      accessorKey: "productType",
+      header: "Loại",
+      cell: ({ row }) => row.original.productType ?? "—",
+    },
+    {
       id: "variants",
       header: "Biến thể",
       cell: ({ row }) => row.original.variants.length,

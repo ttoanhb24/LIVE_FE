@@ -2,26 +2,40 @@ import { queryOptions } from "@tanstack/react-query"
 
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 
-import { fetchProduct, fetchProducts } from "../services/productService"
+import {
+  fetchProduct,
+  fetchProducts,
+  fetchProductTypes,
+} from "../services/productService"
 import type { ListProductsParams } from "../types/product"
 
 export const productKeys = {
   all: ["products"] as const,
   list: (params: ListProductsParams) => [...productKeys.all, "list", params] as const,
   detail: (id: string) => [...productKeys.all, "detail", id] as const,
+  types: () => [...productKeys.all, "types"] as const,
 }
 
 export function listProductsQueryOptions(params: ListProductsParams = {}) {
-  const page = params.page ?? DEFAULT_PAGE
-  const limit = params.limit ?? DEFAULT_LIMIT
-  const q = params.q?.trim() || undefined
-  const categoryId = params.categoryId
-  const isActive = params.isActive
+  const normalized = {
+    ...params,
+    page: params.page ?? DEFAULT_PAGE,
+    limit: params.limit ?? DEFAULT_LIMIT,
+    q: params.q?.trim() || undefined,
+  }
 
   return queryOptions({
-    queryKey: productKeys.list({ page, limit, q, categoryId, isActive }),
-    queryFn: () => fetchProducts({ page, limit, q, categoryId, isActive }),
+    queryKey: productKeys.list(normalized),
+    queryFn: () => fetchProducts(normalized),
     staleTime: 30_000,
+  })
+}
+
+export function productTypesQueryOptions() {
+  return queryOptions({
+    queryKey: productKeys.types(),
+    queryFn: fetchProductTypes,
+    staleTime: 5 * 60_000,
   })
 }
 
