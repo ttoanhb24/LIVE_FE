@@ -1,22 +1,18 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { Search } from "lucide-react"
 import { useState } from "react"
-import { Navigate } from "react-router-dom"
 
 import { DatePickerFieldIso } from "@/components/FieldCustom/DatePickerField"
 import { PageHeader } from "@/components/UiCustom/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { urlPaths } from "@/constants/urlPaths"
 import { useDebounce } from "@/hooks/useDebounce"
-import { useIsStaff } from "@/lib/roles"
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 
 import { SessionReportsTable } from "./components/SessionReportsTable"
 import { listSessionReportsQueryOptions } from "./queries/session-report-query"
 
 export default function SessionReportsPage() {
-  const isStaff = useIsStaff()
   const [page, setPage] = useState(DEFAULT_PAGE)
   const [search, setSearch] = useState("")
   const [from, setFrom] = useState("")
@@ -32,12 +28,7 @@ export default function SessionReportsPage() {
       to: to || undefined,
     }),
     placeholderData: keepPreviousData,
-    enabled: isStaff,
   })
-
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
 
   const reports = data?.data ?? []
   const meta = data?.meta

@@ -17,8 +17,9 @@ interface ScriptBlocksTableProps {
   pageIndex: number
   pageCount: number
   onPageChange: (pageIndex: number) => void
-  onEdit: (block: ScriptBlock) => void
-  onDelete: (block: ScriptBlock) => void
+  /** Bỏ trống cả hai thì ẩn cột thao tác (MEMBER chỉ xem). */
+  onEdit?: (block: ScriptBlock) => void
+  onDelete?: (block: ScriptBlock) => void
 }
 
 function excerpt(text: string, max = 80): string {
@@ -101,7 +102,10 @@ export function ScriptBlocksTable({
         </Badge>
       ),
     },
-    {
+  ]
+
+  if (onEdit && onDelete) {
+    columns.push({
       id: "actions",
       header: "Thao tác",
       cell: ({ row }) => (
@@ -126,8 +130,8 @@ export function ScriptBlocksTable({
           </Button>
         </div>
       ),
-    },
-  ]
+    })
+  }
 
   return (
     <DataTable

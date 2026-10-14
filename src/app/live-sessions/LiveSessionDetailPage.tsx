@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, RefreshCw, Trash2 } from "lucide-react"
 import { useState } from "react"
-import { Navigate, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { formatDuration } from "@/app/home/utils/format-duration"
 import { LiveSessionDeleteDialog } from "@/app/live-sessions/components/LiveSessionDeleteDialog"
@@ -17,6 +17,7 @@ import { urlPaths } from "@/constants/urlPaths"
 import { useIsStaff } from "@/lib/roles"
 
 export default function LiveSessionDetailPage() {
+  // MEMBER xem được; generate lại/xóa chỉ LEADER + ADMIN.
   const isStaff = useIsStaff()
   const navigate = useNavigate()
   const { id = "" } = useParams()
@@ -32,14 +33,10 @@ export default function LiveSessionDetailPage() {
     isError,
   } = useQuery({
     ...liveSessionDetailQueryOptions(id),
-    enabled: isStaff && !!id,
+    enabled: !!id,
   })
 
-  if (!isStaff) {
-    return <Navigate to={urlPaths.home} replace />
-  }
-
-  const isDraft = session?.status === "DRAFT"
+  const canEdit = isStaff && session?.status === "DRAFT"
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
@@ -57,7 +54,7 @@ export default function LiveSessionDetailPage() {
                 {SESSION_STATUS_LABELS[session.status]}
               </Badge>
             ) : null}
-            {isDraft ? (
+            {canEdit ? (
               <>
                 <Button
                   type="button"
@@ -97,30 +94,34 @@ export default function LiveSessionDetailPage() {
         <LiveSessionTimeline segments={session.segments} />
       )}
 
-      <LiveSessionDeleteDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        session={session ?? null}
-        loading={deleteMutation.isPending}
-        onConfirm={() => {
-          if (!session) return
-          deleteMutation.mutate(session.id, {
-            onSuccess: () => navigate(urlPaths.liveSessions),
-          })
-        }}
-      />
+      {isStaff ? (
+        <>
+          <LiveSessionDeleteDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+            session={session ?? null}
+            loading={deleteMutation.isPending}
+            onConfirm={() => {
+              if (!session) return
+              deleteMutation.mutate(session.id, {
+                onSuccess: () => navigate(urlPaths.liveSessions),
+              })
+            }}
+          />
 
-      <LiveSessionRegenerateDialog
-        open={regenerateOpen}
-        onOpenChange={setRegenerateOpen}
-        loading={regenerateMutation.isPending}
-        onConfirm={() => {
-          if (!session) return
-          regenerateMutation.mutate(session.id, {
-            onSuccess: () => setRegenerateOpen(false),
-          })
-        }}
-      />
+          <LiveSessionRegenerateDialog
+            open={regenerateOpen}
+            onOpenChange={setRegenerateOpen}
+            loading={regenerateMutation.isPending}
+            onConfirm={() => {
+              if (!session) return
+              regenerateMutation.mutate(session.id, {
+                onSuccess: () => setRegenerateOpen(false),
+              })
+            }}
+          />
+        </>
+      ) : null}
     </div>
   )
 }
