@@ -7,6 +7,7 @@ import { productKeys } from "../queries/product-query"
 import {
   createProduct,
   deleteProduct,
+  runSapoSync,
   updateProduct,
   uploadProductImage,
 } from "../services/productService"
@@ -94,9 +95,29 @@ export function useProductMutations() {
     },
   })
 
+  const sapoSyncMutation = useMutation({
+    mutationFn: async () => {
+      const status = await runSapoSync()
+      if (status.error) throw new Error(status.error)
+      return status.result
+    },
+    onSuccess: async (result) => {
+      await invalidate()
+      toast.success(
+        `Đồng bộ Sapo xong: ${result?.created ?? 0} SP mới, ${result?.updated ?? 0} SP cập nhật, ${result?.deactivated ?? 0} SP ngưng bán`
+      )
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(error, error.message || "Không đồng bộ được Sapo")
+      )
+    },
+  })
+
   return {
     createMutation,
     updateMutation,
     deleteMutation,
+    sapoSyncMutation,
   }
 }
