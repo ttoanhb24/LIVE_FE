@@ -26,11 +26,12 @@ export function CollapsibleNavItem({ item }: CollapsibleNavItemProps) {
   return (
     <div className="flex flex-col">
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "group flex items-center justify-between gap-3 rounded-lg px-4 py-2 text-sm transition-all",
           isActive
-            ? "bg-emerald-900/40 text-emerald-100"
+            ? "bg-emerald-900/40 text-white"
             : "bg-primary hover:bg-emerald-900/40"
         )}
       >
@@ -45,18 +46,19 @@ export function CollapsibleNavItem({ item }: CollapsibleNavItemProps) {
         )}
       </button>
       {isOpen && (
-        <div className="mt-1 ml-9 flex flex-col space-y-1 border-l border-emerald-800/50 pl-2">
+        <div className="mt-1 ml-6 flex flex-col space-y-1 border-l border-white/20 pl-2">
           {item.children?.map((child) => {
             const isChildActive = child.to === activeChildTo
+            // Mục con đang mở: cùng kiểu với mục menu thường đang mở (NavGroup).
             return (
               <NavLink
                 key={child.to}
                 to={child.to}
                 className={cn(
-                  "rounded-md px-3 py-1.5 text-xs transition-all",
+                  "rounded-lg px-3 py-1.5 text-sm transition-all",
                   isChildActive
-                    ? "bg-primary/50 font-medium text-white"
-                    : "text-emerald-400 hover:bg-emerald-900/30 hover:text-emerald-200"
+                    ? "border-l-4 border-l-lime-400 bg-[#014D4E] text-white"
+                    : "text-white/80 hover:bg-emerald-900/40 hover:text-white"
                 )}
               >
                 {child.label}

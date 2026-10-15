@@ -3,7 +3,7 @@ export interface NavItem {
   label: string
   icon: React.ReactNode
   isHighlighted?: boolean
-  children?: { label: string; to: string }[]
+  children?: { label: string; to: string; staffOnly?: boolean }[]
   /** Chỉ LEADER + ADMIN thấy. Không đặt = MEMBER cũng thấy (trang chỉ xem). */
   staffOnly?: boolean
 }

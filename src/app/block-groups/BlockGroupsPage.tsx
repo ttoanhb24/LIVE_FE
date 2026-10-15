@@ -129,12 +129,12 @@ export default function BlockGroupsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
       <PageHeader
-        title="Nhóm block"
-        description="Quản lý mục con của block CTA."
+        title="Nhóm CTA"
+        description="Chia nội dung kêu gọi hành động thành các nhóm: Tương tác, Chốt đơn, Social proof..."
         actions={
           <Button type="button" onClick={openCreateDialog}>
             <Plus className="h-4 w-4" />
-            Thêm nhóm block
+            Thêm nhóm CTA
           </Button>
         }
       />
