@@ -239,7 +239,7 @@ export function ScriptBlockFormDialog({
         ) : null}
         {scriptBlock.groupName ? (
           <p>
-            <span className="text-muted-foreground">Nhóm block: </span>
+            <span className="text-muted-foreground">Nhóm CTA: </span>
             {scriptBlock.groupName}
           </p>
         ) : null}
@@ -425,8 +425,8 @@ export function ScriptBlockFormDialog({
               <FormSelect
                 control={createForm.control}
                 name="groupId"
-                label="Nhóm block"
-                placeholder="Chọn nhóm block"
+                label="Nhóm CTA"
+                placeholder="Chọn nhóm CTA"
                 options={groupOptions}
                 required
               />

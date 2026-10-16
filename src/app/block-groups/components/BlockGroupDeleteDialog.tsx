@@ -22,11 +22,11 @@ export function BlockGroupDeleteDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Xóa nhóm block"
+      title="Xóa nhóm CTA"
       message={
         blockGroup
           ? `Bạn có chắc muốn xóa nhóm "${blockGroup.name}" (${getBlockTypeLabel(blockGroup.type)} / ${blockGroup.code})?`
-          : "Bạn có chắc muốn xóa nhóm block này?"
+          : "Bạn có chắc muốn xóa nhóm CTA này?"
       }
       loading={loading}
       onConfirm={onConfirm}

@@ -3,7 +3,6 @@ import {
   ClipboardList,
   Clapperboard,
   Home,
-  Layers,
   Package,
   ScrollText,
   Smile,
@@ -45,20 +44,17 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
     staffOnly: true,
   },
   {
-    to: urlPaths.blockGroups,
-    label: "Nhóm block",
-    icon: <Layers className="h-4 w-4" />,
-    staffOnly: true,
-  },
-  {
     to: urlPaths.products,
     label: "Sản phẩm",
     icon: <Package className="h-4 w-4" />,
   },
   {
-    to: urlPaths.scriptBlocks,
     label: "Kho nội dung",
     icon: <ScrollText className="h-4 w-4" />,
+    children: [
+      { label: "Nội dung", to: urlPaths.scriptBlocks },
+      { label: "Nhóm CTA", to: urlPaths.blockGroups, staffOnly: true },
+    ],
   },
   {
     to: urlPaths.liveSessions,
@@ -83,7 +79,16 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
   },
 ]
 
-/** Mục "QUẢN TRỊ" theo quyền: LEADER + ADMIN thấy hết, MEMBER bỏ mục `staffOnly`. */
+/**
+ * Mục "QUẢN TRỊ" theo quyền: LEADER + ADMIN thấy hết, MEMBER bỏ mục `staffOnly` (cả mục con).
+ * Còn đúng một mục con (MEMBER ở "Kho nội dung") thì hiện thành link thường, khỏi xổ menu.
+ */
 export function visibleAdminNavItems(isStaff: boolean): NavItem[] {
-  return isStaff ? ADMIN_NAV_ITEMS : ADMIN_NAV_ITEMS.filter((item) => !item.staffOnly)
+  if (isStaff) return ADMIN_NAV_ITEMS
+  return ADMIN_NAV_ITEMS.filter((item) => !item.staffOnly).map((item) => {
+    const children = item.children?.filter((child) => !child.staffOnly)
+    if (children?.length === 1)
+      return { ...item, to: children[0].to, children: undefined }
+    return children ? { ...item, children } : item
+  })
 }

@@ -24,10 +24,10 @@ export function useBlockGroupMutations() {
     mutationFn: (payload: CreateBlockGroupPayload) => createBlockGroup(payload),
     onSuccess: async () => {
       await invalidate()
-      toast.success("Tạo nhóm block thành công")
+      toast.success("Tạo nhóm CTA thành công")
     },
     onError: (error) => {
-      toast.error(getApiErrorMessage(error, "Không thể tạo nhóm block"))
+      toast.error(getApiErrorMessage(error, "Không thể tạo nhóm CTA"))
     },
   })
 
@@ -41,10 +41,10 @@ export function useBlockGroupMutations() {
     }) => updateBlockGroup(id, payload),
     onSuccess: async () => {
       await invalidate()
-      toast.success("Cập nhật nhóm block thành công")
+      toast.success("Cập nhật nhóm CTA thành công")
     },
     onError: (error) => {
-      toast.error(getApiErrorMessage(error, "Không thể cập nhật nhóm block"))
+      toast.error(getApiErrorMessage(error, "Không thể cập nhật nhóm CTA"))
     },
   })
 
@@ -52,10 +52,10 @@ export function useBlockGroupMutations() {
     mutationFn: (id: string) => deleteBlockGroup(id),
     onSuccess: async () => {
       await invalidate()
-      toast.success("Xóa nhóm block thành công")
+      toast.success("Xóa nhóm CTA thành công")
     },
     onError: (error) => {
-      toast.error(getApiErrorMessage(error, "Không thể xóa nhóm block"))
+      toast.error(getApiErrorMessage(error, "Không thể xóa nhóm CTA"))
     },
   })
 

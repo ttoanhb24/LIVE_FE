@@ -50,7 +50,7 @@ function refineScope(
   if (GROUP_REQUIRED_TYPES.includes(data.type) && !data.groupId?.trim()) {
     ctx.addIssue({
       code: "custom",
-      message: "CTA phải chọn nhóm block",
+      message: "CTA phải chọn nhóm CTA",
       path: ["groupId"],
     })
   }
@@ -72,7 +72,7 @@ function refineScope(
   ) {
     ctx.addIssue({
       code: "custom",
-      message: "Loại này không được gắn nhóm block",
+      message: "Loại này không được gắn nhóm CTA",
       path: ["groupId"],
     })
   }

@@ -86,10 +86,10 @@ export function BlockGroupFormDialog({
   }, [open, isEdit, blockGroup, createForm, updateForm])
 
   const formId = isEdit ? "block-group-edit-form" : "block-group-create-form"
-  const title = isEdit ? "Sửa nhóm block" : "Thêm nhóm block"
+  const title = isEdit ? "Sửa nhóm CTA" : "Thêm nhóm CTA"
   const description = isEdit
     ? "Loại và mã nhóm không thể thay đổi sau khi tạo."
-    : "Nhóm block là mục con của CTA (Tương tác, Chốt đơn, Social proof...)."
+    : "Nhóm của nội dung kêu gọi hành động (Tương tác, Chốt đơn, Social proof...)."
 
   return (
     <FormDialog
