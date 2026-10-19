@@ -18,7 +18,6 @@ const API_PATHS = {
     BASE: "/products",
     BY_ID: (id: string) => `/products/${id}`,
     UPLOAD_IMAGE: "/products/upload-image",
-    SAPO_SYNC: "/products/sapo-sync",
     TYPES: "/products/types",
   },
   SCRIPT_BLOCKS: {

@@ -95,7 +95,7 @@ export function ProductFormDialog({
   const title = isEdit ? "Sửa sản phẩm" : "Thêm sản phẩm"
   const description = isEdit
     ? "Mã sản phẩm không thể thay đổi sau khi tạo."
-    : "Tạo sản phẩm thủ công. Sau này có thể liên kết Sapo và đồng bộ danh mục."
+    : "Tạo sản phẩm thủ công."
 
   const imageUploadKey = `${mode}-${product?.id ?? "new"}-${String(open)}`
 

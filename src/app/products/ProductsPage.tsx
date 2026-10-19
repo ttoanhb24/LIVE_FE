@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { Plus, RefreshCw, Search } from "lucide-react"
+import { Plus, Search } from "lucide-react"
 import { useState } from "react"
 
 import { ProductDeleteDialog } from "@/app/products/components/ProductDeleteDialog"
@@ -29,7 +29,6 @@ import {
 import { MODAL_MODE } from "@/constants/common"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useIsStaff } from "@/lib/roles"
-import { cn } from "@/lib/utils"
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/types/pagination"
 
 const ALL = "ALL"
@@ -63,7 +62,7 @@ export default function ProductsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
 
-  const { createMutation, updateMutation, deleteMutation, sapoSyncMutation } =
+  const { createMutation, updateMutation, deleteMutation } =
     useProductMutations()
 
   const { data, isLoading, isFetching } = useQuery({
@@ -165,31 +164,13 @@ export default function ProductsPage() {
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
       <PageHeader
         title="Sản phẩm"
-        description="Quản lý mã hàng và biến thể. Đồng bộ từ Sapo hoặc thêm tay."
+        description="Quản lý mã hàng và biến thể."
         actions={
           isStaff ? (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={sapoSyncMutation.isPending}
-                onClick={() => sapoSyncMutation.mutate()}
-              >
-                <RefreshCw
-                  className={cn(
-                    "h-4 w-4",
-                    sapoSyncMutation.isPending && "animate-spin"
-                  )}
-                />
-                {sapoSyncMutation.isPending
-                  ? "Đang đồng bộ..."
-                  : "Đồng bộ Sapo"}
-              </Button>
-              <Button type="button" onClick={openCreateDialog}>
-                <Plus className="h-4 w-4" />
-                Thêm sản phẩm
-              </Button>
-            </>
+            <Button type="button" onClick={openCreateDialog}>
+              <Plus className="h-4 w-4" />
+              Thêm sản phẩm
+            </Button>
           ) : undefined
         }
       />

@@ -25,8 +25,7 @@ export function ProductVariantsFields<T extends FieldValues>({
         <div>
           <p className="text-sm font-medium">Biến thể</p>
           <p className="text-sm text-muted-foreground">
-            SKU, giá và tồn kho theo size/màu. Có thể thêm sau khi liên kết
-            Sapo.
+            SKU, giá và tồn kho theo size/màu.
           </p>
         </div>
         <Button

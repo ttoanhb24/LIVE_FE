@@ -67,14 +67,3 @@ export interface ListProductsParams {
 export interface ProductImageUploadResponse {
   imageUrl: string
 }
-
-export interface SapoSyncStatus {
-  running: boolean
-  result: {
-    total: number
-    created: number
-    updated: number
-    deactivated: number
-  } | null
-  error: string | null
-}
